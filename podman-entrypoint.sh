@@ -59,12 +59,8 @@ ssh-add ~/.ssh/id_rsa
 
 
 echo "Add known hosts"
-echo $INPUT_SSH_PORT
-echo $SSH_HOST
-ssh-keyscan
-ssh-keyscan -p $INPUT_SSH_PORT "$SSH_HOST"
-ssh-keyscan -p $INPUT_SSH_PORT "$SSH_HOST" >> ~/.ssh/known_hosts
-ssh-keyscan -p $INPUT_SSH_PORT "$SSH_HOST" >> /etc/ssh/ssh_known_hosts
+ssh-keyscan -p $INPUT_SSH_PORT $SSH_HOST >> ~/.ssh/known_hosts
+ssh-keyscan -p $INPUT_SSH_PORT $SSH_HOST >> /etc/ssh/ssh_known_hosts
 # set context
 echo "Create docker context"
 podman context create staging --docker "host=ssh://$INPUT_REMOTE_DOCKER_HOST:$INPUT_SSH_PORT"
