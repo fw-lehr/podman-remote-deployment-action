@@ -7,7 +7,7 @@ inputs:
     required: true
   ssh_public_key:
     description: Remote Docker SSH public key
-    required: true
+    required: false
   ssh_private_key:
     description: SSH private key used to connect to the docker host
     required: true
@@ -32,7 +32,7 @@ inputs:
 
 runs:
   using: docker
-  image: docker://fw-lehr/podman-remote-deployment-action:v0.2
+  image: docker://fw-lehr/podman-remote-deployment-action:latest
 
 
 branding:
