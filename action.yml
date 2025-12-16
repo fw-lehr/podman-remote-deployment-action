@@ -32,7 +32,7 @@ inputs:
 
 runs:
   using: docker
-  image: docker://fw-lehr/podman-remote-deployment-action:latest
+  image: docker://araschke/podman-remote-deployment-action:latest
 
 
 branding:
