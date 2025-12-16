@@ -33,8 +33,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            araschke/docker-remote-deployment-action:latest
-            araschke/docker-remote-deployment-action:${{ github.event.release.tag_name }}
+            fw-lehr/podman-remote-deployment-action:latest
+            fw-lehr/podman-remote-deployment-action:${{ github.event.release.tag_name }}
 
 
 
