@@ -1,7 +1,7 @@
-FROM docker:latest
+FROM mgoltzsche/podman:latest
 
-RUN apk --no-cache add openssh-client docker-compose
+RUN apk --no-cache add openssh-client
 
-COPY docker-entrypoint.sh /docker-entrypoint.sh
+COPY podman-entrypoint.sh /podman-entrypoint.sh
 
-ENTRYPOINT ["/docker-entrypoint.sh"]
+ENTRYPOINT ["/podman-entrypoint.sh"]
