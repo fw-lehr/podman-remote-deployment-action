@@ -13,10 +13,10 @@ if [ -z "$INPUT_REMOTE_DOCKER_HOST" ]; then
     exit 1
 fi
 
-if [ -z "$INPUT_SSH_PUBLIC_KEY" ]; then
-    echo "Input ssh_public_key is required!"
-    exit 1
-fi
+#if [ -z "$INPUT_SSH_PUBLIC_KEY" ]; then
+#    echo "Input ssh_public_key is required!"
+#    exit 1
+#fi
 
 if [ -z "$INPUT_SSH_PRIVATE_KEY" ]; then
     echo "Input ssh_private_key is required!"
