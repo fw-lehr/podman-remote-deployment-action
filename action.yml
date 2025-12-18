@@ -1,19 +1,19 @@
-name: Docker-Compose Remote Deployment
-author: Wernich Bekker<wernich.bekker+dev@gmail.com>, Alexander Raschke
+name: Podman Compose Remote Deployment
+author: Alexander Raschke
 description: A GitHub Action that supports docker-compose on remote hosts
 inputs:
-  remote_docker_host:
-    description: Remote Docker host ie (user@host)
+  remote_container_host:
+    description: Remote container host, i.e. (user@host)
     required: true
-  ssh_public_key:
-    description: Remote Docker SSH public key
-    required: false
   ssh_private_key:
     description: SSH private key used to connect to the docker host
     required: true
   args:
     description: Deployment command args.
     required: true
+  remote_socket_path:
+    description: remote path to podman socket. Default is /run/user/1000/podman/podman.sock
+    required: false
   stack_file_name:
     description: Docker stack file used. Default is docker-compose.yaml
     required: false
