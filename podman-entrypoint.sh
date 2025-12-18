@@ -1,8 +1,8 @@
 #!/bin/sh
 set -eu
 
-if [ -z "$INPUT_REMOTE_DOCKER_HOST" ]; then
-    echo "Input remote_docker_host is required!"
+if [ -z "$INPUT_REMOTE_CONTAINER_HOST" ]; then
+    echo "Input remote_container_host is required!"
     exit 1
 fi
 
@@ -29,7 +29,7 @@ if [ -z "$INPUT_SSH_PORT" ]; then
 fi
 
 STACK_FILE=${INPUT_STACK_FILE_NAME}
-CONTAINER_HOST="ssh://$INPUT_REMOTE_DOCKER_HOST:$INPUT_SSH_PORT$INPUT_REMOTE_SOCKET_PATH"
+CONTAINER_HOST="ssh://$INPUT_REMOTE_CONTAINER_HOST:$INPUT_SSH_PORT$INPUT_REMOTE_SOCKET_PATH"
 
 DEPLOYMENT_COMMAND="podman compose -f $STACK_FILE"
 
