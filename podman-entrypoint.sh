@@ -45,7 +45,7 @@ ssh-add $CONTAINER_SSHKEY
 
 
 if  [ -n "$INPUT_DOCKER_LOGIN_PASSWORD" ] || [ -n "$INPUT_DOCKER_LOGIN_USER" ] || [ -n "$INPUT_DOCKER_LOGIN_REGISTRY" ]; then
-  echo "Connecting to $INPUT_REMOTE_DOCKER_HOST... Command: podman login"
+  echo "Command: podman login "
   podman login -u "$INPUT_DOCKER_LOGIN_USER" -p "$INPUT_DOCKER_LOGIN_PASSWORD" "$INPUT_DOCKER_LOGIN_REGISTRY"
 fi
 
