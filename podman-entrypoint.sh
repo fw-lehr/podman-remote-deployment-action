@@ -43,7 +43,8 @@ chmod 600 $CONTAINER_SSHKEY
 eval $(ssh-agent)
 ssh-add $CONTAINER_SSHKEY
 
-podman system connection add --identity "$CONTAINER_SSHKEY" remote "$CONTAINER_HOST"
+echo "Add ${CONTAINER_HOST} to connections ... "
+podman system connection add --identity "$CONTAINER_SSHKEY" vps "$CONTAINER_HOST"
 
 if  [ -n "$INPUT_DOCKER_LOGIN_PASSWORD" ] || [ -n "$INPUT_DOCKER_LOGIN_USER" ] || [ -n "$INPUT_DOCKER_LOGIN_REGISTRY" ]; then
   echo "Command: podman login -u ${INPUT_DOCKER_LOGIN_USER} -p $INPUT_DOCKER_LOGIN_PASSWORD $INPUT_DOCKER_LOGIN_REGISTRY"
