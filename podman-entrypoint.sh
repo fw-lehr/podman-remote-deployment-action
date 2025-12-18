@@ -1,22 +1,14 @@
 #!/bin/sh
 set -eu
 
-execute_ssh(){
-  echo "Execute Over SSH: $@"
-  ssh -q -t -i "$HOME/.ssh/id_rsa" \
-      -o UserKnownHostsFile=/dev/null \
-      -o StrictHostKeyChecking=no "$INPUT_REMOTE_DOCKER_HOST" -p "$INPUT_SSH_PORT" "$@"
-}
-
 if [ -z "$INPUT_REMOTE_DOCKER_HOST" ]; then
     echo "Input remote_docker_host is required!"
     exit 1
 fi
 
-#if [ -z "$INPUT_SSH_PUBLIC_KEY" ]; then
-#    echo "Input ssh_public_key is required!"
-#    exit 1
-#fi
+if [ -z "$INPUT_REMOTE_SOCKET_PATH" ]; then
+  INPUT_REMOTE_SOCKET_PATH=/run/user/1000/podman/podman.sock
+fi
 
 if [ -z "$INPUT_SSH_PRIVATE_KEY" ]; then
     echo "Input ssh_private_key is required!"
@@ -37,44 +29,25 @@ if [ -z "$INPUT_SSH_PORT" ]; then
 fi
 
 STACK_FILE=${INPUT_STACK_FILE_NAME}
-DOCKER_HOST="ssh://$INPUT_REMOTE_DOCKER_HOST:$INPUT_SSH_PORT"
+CONTAINER_HOST="ssh://$INPUT_REMOTE_DOCKER_HOST:$INPUT_SSH_PORT$INPUT_REMOTE_SOCKET_PATH"
 
 DEPLOYMENT_COMMAND="podman-compose -f $STACK_FILE"
 
+CONTAINER_SSHKEY=~/.ssh/id_rsa
 
-SSH_HOST="${INPUT_REMOTE_DOCKER_HOST#*@}"
-
-echo $SSH_HOST
-
-echo "Registering SSH keys..."
-
+echo "Saving SSH key in ${CONTAINER_SSHKEY}"
 # register the private key with the agent.
 mkdir -p ~/.ssh
-ls ~/.ssh
-printf '%s\n' "$INPUT_SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-chmod 600 ~/.ssh/id_rsa
-printf '%s\n' "$INPUT_SSH_PUBLIC_KEY" > ~/.ssh/id_rsa.pub
-chmod 600 ~/.ssh/id_rsa.pub
-#chmod 600 "~/.ssh"
+printf '%s\n' "$INPUT_SSH_PRIVATE_KEY" > $CONTAINER_SSHKEY
+chmod 600 $CONTAINER_SSHKEY
 eval $(ssh-agent)
-ssh-add ~/.ssh/id_rsa
-
-
-echo "Add known hosts"
-ssh-keyscan -p $INPUT_SSH_PORT $SSH_HOST 1> ~/.ssh/known_hosts
-# set context
-echo "Create docker context"
-podman context create staging --docker "host=ssh://$INPUT_REMOTE_DOCKER_HOST:$INPUT_SSH_PORT"
-podman context use staging
+ssh-add $CONTAINER_SSHKEY
 
 
 if  [ -n "$INPUT_DOCKER_LOGIN_PASSWORD" ] || [ -n "$INPUT_DOCKER_LOGIN_USER" ] || [ -n "$INPUT_DOCKER_LOGIN_REGISTRY" ]; then
   echo "Connecting to $INPUT_REMOTE_DOCKER_HOST... Command: podman login"
-  # podman login -u "$INPUT_DOCKER_LOGIN_USER" -p "$INPUT_DOCKER_LOGIN_PASSWORD" "$INPUT_DOCKER_LOGIN_REGISTRY"
-  ssh -o StrictHostKeyChecking=no  "$INPUT_REMOTE_DOCKER_HOST" podman login -u "$INPUT_DOCKER_LOGIN_USER" -p "$INPUT_DOCKER_LOGIN_PASSWORD" "$INPUT_DOCKER_LOGIN_REGISTRY"
+  podman login -u "$INPUT_DOCKER_LOGIN_USER" -p "$INPUT_DOCKER_LOGIN_PASSWORD" "$INPUT_DOCKER_LOGIN_REGISTRY"
 fi
 
-echo "Command: ${DEPLOYMENT_COMMAND} ${INPUT_ARGS}"
-ssh -o StrictHostKeyChecking=no "$INPUT_REMOTE_DOCKER_HOST" ${DEPLOYMENT_COMMAND} ${INPUT_ARGS}
-
-
+echo "Command: ${DEPLOYMENT_COMMAND} ${INPUT_ARGS} executed at ${$CONTAINER_HOST}"
+${DEPLOYMENT_COMMAND} ${INPUT_ARGS}
