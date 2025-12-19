@@ -1,9 +1,8 @@
 #!/bin/sh
 set -eu
 
-pwd
-ls */*
-
+PATH_TO_PODMAN_COMPOSE="/usr/lib/python3/dist-packages/podman_compose.py"
+sed 's/cmd_ls = \[self.podman_path, \*podman_args, cmd\] + xargs + cmd_args/cmd_ls = \[self.podman_path, \*xargs, \*podman_args, cmd\] + cmd_args/' $PATH_TO_PODMAN_COMPOSE > ./podman-compose.py
 
 if [ -z "$INPUT_REMOTE_CONTAINER_HOST" ]; then
     echo "Input remote_container_host is required!"
@@ -32,11 +31,6 @@ if [ -z "$INPUT_SSH_PORT" ]; then
   INPUT_SSH_PORT=22
 fi
 
-STACK_FILE=${INPUT_STACK_FILE_NAME}
-CONTAINER_HOST="ssh://$INPUT_REMOTE_CONTAINER_HOST:$INPUT_SSH_PORT$INPUT_REMOTE_SOCKET_PATH"
-
-DEPLOYMENT_COMMAND="podman --debug --connection vps compose -f $STACK_FILE"
-
 CONTAINER_SSHKEY=~/.ssh/id_rsa
 
 echo "Saving SSH key in ${CONTAINER_SSHKEY}"
@@ -47,6 +41,10 @@ chmod 600 $CONTAINER_SSHKEY
 eval $(ssh-agent)
 ssh-add $CONTAINER_SSHKEY
 
+STACK_FILE=${INPUT_STACK_FILE_NAME}
+CONTAINER_HOST="ssh://$INPUT_REMOTE_CONTAINER_HOST:$INPUT_SSH_PORT$INPUT_REMOTE_SOCKET_PATH"
+DEPLOYMENT_COMMAND="podman-compose.py --debug --connection vps compose -f $STACK_FILE"
+
 echo "Add ${CONTAINER_HOST} to connections ... "
 podman system connection add --identity "$CONTAINER_SSHKEY" vps "$CONTAINER_HOST"
 
@@ -54,8 +52,6 @@ if  [ -n "$INPUT_DOCKER_LOGIN_PASSWORD" ] || [ -n "$INPUT_DOCKER_LOGIN_USER" ] |
   echo "Command: podman --debug login -u ${INPUT_DOCKER_LOGIN_USER} -p $INPUT_DOCKER_LOGIN_PASSWORD $INPUT_DOCKER_LOGIN_REGISTRY"
   podman --debug --connection vps login -u "$INPUT_DOCKER_LOGIN_USER" -p "$INPUT_DOCKER_LOGIN_PASSWORD" "$INPUT_DOCKER_LOGIN_REGISTRY"
 fi
-
-eval "$INPUT_ARGS"
 
 echo "Command: ${DEPLOYMENT_COMMAND} ${INPUT_ARGS} executed at ${CONTAINER_HOST}"
 eval "$DEPLOYMENT_COMMAND $INPUT_ARGS"
