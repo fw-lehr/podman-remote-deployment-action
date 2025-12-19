@@ -51,5 +51,5 @@ if  [ -n "$INPUT_DOCKER_LOGIN_PASSWORD" ] || [ -n "$INPUT_DOCKER_LOGIN_USER" ] |
   podman --debug --connection vps login -u "$INPUT_DOCKER_LOGIN_USER" -p "$INPUT_DOCKER_LOGIN_PASSWORD" "$INPUT_DOCKER_LOGIN_REGISTRY"
 fi
 
-echo "Command: ${DEPLOYMENT_COMMAND} ${INPUT_ARGS} executed at ${$CONTAINER_HOST}"
+echo "Command: ${DEPLOYMENT_COMMAND} ${INPUT_ARGS} executed at ${CONTAINER_HOST}"
 eval "$DEPLOYMENT_COMMAND $INPUT_ARGS"
