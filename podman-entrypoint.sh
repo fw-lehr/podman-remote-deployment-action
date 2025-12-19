@@ -44,7 +44,7 @@ ssh-add $CONTAINER_SSHKEY
 
 STACK_FILE=${INPUT_STACK_FILE_NAME}
 CONTAINER_HOST="ssh://$INPUT_REMOTE_CONTAINER_HOST:$INPUT_SSH_PORT$INPUT_REMOTE_SOCKET_PATH"
-DEPLOYMENT_COMMAND="./podman-compose.py --podman-args=\"--connection vps\" compose -f $STACK_FILE"
+DEPLOYMENT_COMMAND="./podman-compose.py --podman-args=\"--connection vps\" -f $STACK_FILE"
 
 echo "Add ${CONTAINER_HOST} to connections ... "
 podman system connection add --identity "$CONTAINER_SSHKEY" vps "$CONTAINER_HOST"
