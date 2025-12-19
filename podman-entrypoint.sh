@@ -3,6 +3,7 @@ set -eu
 
 PATH_TO_PODMAN_COMPOSE="/usr/lib/python3/dist-packages/podman_compose.py"
 sed 's/cmd_ls = \[self.podman_path, \*podman_args, cmd\] + xargs + cmd_args/cmd_ls = \[self.podman_path, \*xargs, \*podman_args, cmd\] + cmd_args/' $PATH_TO_PODMAN_COMPOSE > ./podman-compose.py
+chmod u+x ./podman-compose.py
 
 if [ -z "$INPUT_REMOTE_CONTAINER_HOST" ]; then
     echo "Input remote_container_host is required!"
@@ -43,7 +44,7 @@ ssh-add $CONTAINER_SSHKEY
 
 STACK_FILE=${INPUT_STACK_FILE_NAME}
 CONTAINER_HOST="ssh://$INPUT_REMOTE_CONTAINER_HOST:$INPUT_SSH_PORT$INPUT_REMOTE_SOCKET_PATH"
-DEPLOYMENT_COMMAND="podman-compose.py --debug --connection vps compose -f $STACK_FILE"
+DEPLOYMENT_COMMAND="./podman-compose.py --debug --connection vps compose -f $STACK_FILE"
 
 echo "Add ${CONTAINER_HOST} to connections ... "
 podman system connection add --identity "$CONTAINER_SSHKEY" vps "$CONTAINER_HOST"
