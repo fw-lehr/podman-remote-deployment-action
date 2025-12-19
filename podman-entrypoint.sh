@@ -1,6 +1,10 @@
 #!/bin/sh
 set -eu
 
+pwd
+ls */*
+
+
 if [ -z "$INPUT_REMOTE_CONTAINER_HOST" ]; then
     echo "Input remote_container_host is required!"
     exit 1
@@ -50,6 +54,8 @@ if  [ -n "$INPUT_DOCKER_LOGIN_PASSWORD" ] || [ -n "$INPUT_DOCKER_LOGIN_USER" ] |
   echo "Command: podman --debug login -u ${INPUT_DOCKER_LOGIN_USER} -p $INPUT_DOCKER_LOGIN_PASSWORD $INPUT_DOCKER_LOGIN_REGISTRY"
   podman --debug --connection vps login -u "$INPUT_DOCKER_LOGIN_USER" -p "$INPUT_DOCKER_LOGIN_PASSWORD" "$INPUT_DOCKER_LOGIN_REGISTRY"
 fi
+
+eval "$INPUT_ARGS"
 
 echo "Command: ${DEPLOYMENT_COMMAND} ${INPUT_ARGS} executed at ${CONTAINER_HOST}"
 eval "$DEPLOYMENT_COMMAND $INPUT_ARGS"
