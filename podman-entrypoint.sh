@@ -61,7 +61,7 @@ ssh-add $CONTAINER_SSHKEY
 ## The final deployment command is constructed here
 COMPOSE_FILE=${INPUT_COMPOSE_FILE_NAME}
 CONTAINER_HOST="ssh://$INPUT_REMOTE_CONTAINER_HOST:$INPUT_SSH_PORT$INPUT_REMOTE_SOCKET_PATH"
-DEPLOYMENT_COMMAND="./podman-compose.py --podman-args=\"--connection remote\" compose -f $COMPOSE_FILE"
+DEPLOYMENT_COMMAND="./podman-compose.py --podman-args=\"--connection remote\" -f $COMPOSE_FILE"
 
 ## Add the remote host as a podman connection
 echo "Add ${CONTAINER_HOST} to connections ... "
